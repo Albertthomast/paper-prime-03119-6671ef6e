@@ -147,19 +147,64 @@ All colors MUST be HSL.
   /* Print styles for A4 invoices */
   @media print {
     @page {
-      size: A4;
+      size: A4 portrait;
       margin: 0;
     }
     
-    body {
+    html, body {
+      width: 210mm;
+      height: 297mm;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
     }
     
-    /* Force white background for print */
+    /* Force white background and black text for print */
     * {
       background: white !important;
       color: black !important;
+      box-shadow: none !important;
+    }
+
+    /* Prevent page breaks inside elements */
+    table, .print-container, div {
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+
+    /* Hide non-essential elements */
+    button, .shadow-2xl, .rounded-lg {
+      display: none !important;
+    }
+
+    /* Ensure print container fits A4 exactly */
+    .print-container {
+      width: 210mm !important;
+      height: 297mm !important;
+      max-width: 210mm !important;
+      max-height: 297mm !important;
+      padding: 1.5rem !important;
+      margin: 0 !important;
+      overflow: hidden !important;
+      box-sizing: border-box;
+      transform: scale(0.95);
+      transform-origin: top center;
+    }
+
+    /* Ensure tables don't break */
+    thead {
+      display: table-header-group;
+    }
+    
+    tbody {
+      display: table-row-group;
+    }
+
+    tr {
+      page-break-inside: avoid;
+      break-inside: avoid;
     }
   }
 }

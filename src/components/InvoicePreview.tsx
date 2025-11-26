@@ -15,18 +15,49 @@ interface InvoicePreviewProps {
 export const InvoicePreview = ({ invoice, lineItems, companySettings, onBack }: InvoicePreviewProps) => {
   const printRef = useRef<HTMLDivElement>(null);
 
+  // Helper function to sanitize client name for filename
+  const sanitizeFilename = (name: string) => {
+    return name
+      .replace(/[^a-zA-Z0-9\s-]/g, '') // Remove special characters
+      .replace(/\s+/g, '_')            // Replace spaces with underscores
+      .trim();
+  };
+
+  // Get document type prefix
+  const getDocumentTypePrefix = (type: string) => {
+    switch (type) {
+      case 'quote': return 'Quote';
+      case 'proforma': return 'PI';
+      default: return 'Invoice';
+    }
+  };
+
+  // Generate auto filename
+  const documentTitle = `${getDocumentTypePrefix(invoice.invoice_type)}_${invoice.invoice_number}_${sanitizeFilename(invoice.client_name || 'Client')}`;
+
   const handlePrint = useReactToPrint({
     contentRef: printRef,
-    documentTitle: `${invoice.invoice_type === "quote" ? "Quote" : invoice.invoice_type === "proforma" ? "Proforma-Invoice" : "Invoice"}-${invoice.invoice_number}`,
+    documentTitle,
     pageStyle: `
       @page {
         size: A4;
         margin: 0;
       }
       @media print {
-        body {
+        html, body {
+          width: 210mm;
+          height: 297mm;
+          margin: 0;
+          padding: 0;
           -webkit-print-color-adjust: exact;
           print-color-adjust: exact;
+        }
+        .print-container {
+          transform: scale(0.95);
+          transform-origin: top center;
+          width: 210mm !important;
+          height: 297mm !important;
+          overflow: hidden;
         }
       }
     `,
@@ -48,7 +79,7 @@ export const InvoicePreview = ({ invoice, lineItems, companySettings, onBack }: 
 
         {/* Invoice Preview */}
         <div className="bg-white shadow-2xl rounded-lg overflow-hidden">
-          <div ref={printRef} className="p-16" style={{ width: "210mm", minHeight: "297mm" }}>
+          <div ref={printRef} className="print-container p-12 print:p-8" style={{ width: "210mm", height: "297mm" }}>
             {/* Logo */}
             <div className="mb-8">
               {companySettings?.logo_url && (
@@ -109,7 +140,7 @@ export const InvoicePreview = ({ invoice, lineItems, companySettings, onBack }: 
             </div>
 
             {/* Line Items */}
-            <table className="w-full mb-8">
+            <table className="w-full mb-8 print:break-inside-avoid">
               <thead>
                 <tr className="border-b-2 border-gray-900">
                   <th className="text-left py-3 text-sm font-semibold text-gray-700 uppercase">Description</th>
