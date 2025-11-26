@@ -79,9 +79,9 @@ export const InvoicePreview = ({ invoice, lineItems, companySettings, onBack }: 
 
         {/* Invoice Preview */}
         <div className="bg-white shadow-2xl rounded-lg overflow-hidden">
-          <div ref={printRef} className="print-container p-12 print:p-8" style={{ width: "210mm", height: "297mm" }}>
+          <div ref={printRef} className="print-container p-8" style={{ width: "210mm", minHeight: "297mm" }}>
             {/* Logo */}
-            <div className="mb-8">
+            <div className="mb-6">
               {companySettings?.logo_url && (
                 <img 
                   src={companySettings.logo_url} 
@@ -94,7 +94,7 @@ export const InvoicePreview = ({ invoice, lineItems, companySettings, onBack }: 
             {/* Header with invoice type and details on right */}
             <div className="flex justify-end mb-4">
               <div>
-                <h1 className="text-5xl font-bold text-gray-900 mb-4">
+                <h1 className="text-3xl font-bold text-gray-900 mb-3">
                   {invoice.invoice_type === "quote" ? "QUOTE" : invoice.invoice_type === "proforma" ? "PROFORMA INVOICE" : "INVOICE"}
                 </h1>
                 <div className="text-right">
@@ -108,7 +108,7 @@ export const InvoicePreview = ({ invoice, lineItems, companySettings, onBack }: 
             </div>
 
             {/* Bill From (left) and Bill To (right) */}
-            <div className="flex justify-between mb-12">
+            <div className="flex justify-between mb-6">
               {/* Left side - Company info */}
               <div className="flex-1 pr-8">
                 <h2 className="text-sm font-semibold text-gray-500 uppercase mb-3">Bill From</h2>
@@ -140,7 +140,7 @@ export const InvoicePreview = ({ invoice, lineItems, companySettings, onBack }: 
             </div>
 
             {/* Line Items */}
-            <table className="w-full mb-8 print:break-inside-avoid">
+            <table className="w-full mb-6 print:break-inside-avoid">
               <thead>
                 <tr className="border-b-2 border-gray-900">
                   <th className="text-left py-3 text-sm font-semibold text-gray-700 uppercase">Description</th>
@@ -164,7 +164,7 @@ export const InvoicePreview = ({ invoice, lineItems, companySettings, onBack }: 
             </table>
 
             {/* Totals */}
-            <div className="flex justify-end mb-12">
+            <div className="flex justify-end mb-6">
               <div className="w-80">
                 {invoice.discount_amount > 0 && (
                   <>
@@ -210,7 +210,7 @@ export const InvoicePreview = ({ invoice, lineItems, companySettings, onBack }: 
             </div>
 
             {/* Payment Terms & Notes */}
-            <div className="space-y-6">
+            <div className="space-y-4">
               {companySettings?.bank_name && (
                 <div>
                   <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">Bank Details</h3>
@@ -236,7 +236,7 @@ export const InvoicePreview = ({ invoice, lineItems, companySettings, onBack }: 
             </div>
 
             {/* Footer */}
-            <div className="mt-16 pt-8 border-t border-gray-200 text-center text-gray-500 text-sm">
+            <div className="mt-8 pt-6 border-t border-gray-200 text-center text-gray-500 text-sm">
               <p>Thank you for your business!</p>
             </div>
           </div>
