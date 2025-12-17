@@ -145,6 +145,9 @@ export type Database = {
           invoice_type: string
           notes: string | null
           payment_terms: string | null
+          post_gst_discount_amount: number | null
+          post_gst_discount_enabled: boolean | null
+          post_gst_discount_name: string | null
           status: string
           subtotal: number
           total: number
@@ -172,6 +175,9 @@ export type Database = {
           invoice_type: string
           notes?: string | null
           payment_terms?: string | null
+          post_gst_discount_amount?: number | null
+          post_gst_discount_enabled?: boolean | null
+          post_gst_discount_name?: string | null
           status?: string
           subtotal?: number
           total?: number
@@ -199,6 +205,9 @@ export type Database = {
           invoice_type?: string
           notes?: string | null
           payment_terms?: string | null
+          post_gst_discount_amount?: number | null
+          post_gst_discount_enabled?: boolean | null
+          post_gst_discount_name?: string | null
           status?: string
           subtotal?: number
           total?: number

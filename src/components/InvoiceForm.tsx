@@ -61,6 +61,11 @@ export const InvoiceForm = ({ invoiceId, onBack }: InvoiceFormProps) => {
   const [advanceEnabled, setAdvanceEnabled] = useState(false);
   const [advanceType, setAdvanceType] = useState<"percentage" | "amount">("percentage");
   const [advanceValue, setAdvanceValue] = useState(0);
+  
+  // Post-GST discount fields
+  const [postGstDiscountEnabled, setPostGstDiscountEnabled] = useState(false);
+  const [postGstDiscountName, setPostGstDiscountName] = useState("Advance Received");
+  const [postGstDiscountAmount, setPostGstDiscountAmount] = useState(0);
 
   useEffect(() => {
     loadCompanySettings();
@@ -182,6 +187,9 @@ export const InvoiceForm = ({ invoiceId, onBack }: InvoiceFormProps) => {
       setAdvanceEnabled(invoice.advance_enabled || false);
       setAdvanceType((invoice.advance_type as "percentage" | "amount") || "percentage");
       setAdvanceValue(invoice.advance_value || 0);
+      setPostGstDiscountEnabled(invoice.post_gst_discount_enabled || false);
+      setPostGstDiscountName(invoice.post_gst_discount_name || "Advance Received");
+      setPostGstDiscountAmount(invoice.post_gst_discount_amount || 0);
       setLineItems(
         (invoice.line_items || []).map((item: any) => ({
           ...item,
@@ -241,13 +249,21 @@ export const InvoiceForm = ({ invoiceId, onBack }: InvoiceFormProps) => {
     return (taxableAmount * gstRate) / 100;
   };
 
-  const calculateTotal = () => {
+  const calculateTotalBeforePostGstDiscount = () => {
     // When advance is enabled, total is advance + GST on advance
     // Otherwise, total is subtotal + GST
     if (advanceEnabled) {
       return calculateAdvance() + calculateGst();
     }
     return calculateSubtotal() + calculateGst();
+  };
+
+  const calculateTotal = () => {
+    const totalBefore = calculateTotalBeforePostGstDiscount();
+    if (postGstDiscountEnabled) {
+      return totalBefore - postGstDiscountAmount;
+    }
+    return totalBefore;
   };
 
   const autoSave = useCallback(async () => {
@@ -277,6 +293,9 @@ export const InvoiceForm = ({ invoiceId, onBack }: InvoiceFormProps) => {
         advance_enabled: advanceEnabled,
         advance_type: advanceType,
         advance_value: advanceValue,
+        post_gst_discount_enabled: postGstDiscountEnabled,
+        post_gst_discount_name: postGstDiscountName,
+        post_gst_discount_amount: postGstDiscountAmount,
       };
 
       await supabase
@@ -364,6 +383,9 @@ export const InvoiceForm = ({ invoiceId, onBack }: InvoiceFormProps) => {
         advance_enabled: advanceEnabled,
         advance_type: advanceType,
         advance_value: advanceValue,
+        post_gst_discount_enabled: postGstDiscountEnabled,
+        post_gst_discount_name: postGstDiscountName,
+        post_gst_discount_amount: postGstDiscountAmount,
       };
 
       let savedInvoiceId = invoiceId;
@@ -468,6 +490,9 @@ export const InvoiceForm = ({ invoiceId, onBack }: InvoiceFormProps) => {
           advance_enabled: advanceEnabled,
           advance_type: advanceType,
           advance_value: advanceValue,
+          post_gst_discount_enabled: postGstDiscountEnabled,
+          post_gst_discount_name: postGstDiscountName,
+          post_gst_discount_amount: postGstDiscountAmount,
         }}
         lineItems={lineItems}
         companySettings={companySettings}
@@ -863,6 +888,48 @@ export const InvoiceForm = ({ invoiceId, onBack }: InvoiceFormProps) => {
                     <span>GST ({gstRate}%):</span>
                   </div>
                   <span className="font-semibold">{getCurrencySymbol(currency)}{calculateGst().toFixed(2)}</span>
+                </div>
+
+                {/* Post-GST Discount Section */}
+                <div className="space-y-2 border-t pt-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Switch 
+                        checked={postGstDiscountEnabled} 
+                        onCheckedChange={(val) => {
+                          setPostGstDiscountEnabled(val);
+                          setHasChanges(true);
+                        }} 
+                      />
+                      <span className="text-sm">Deduction after GST</span>
+                    </div>
+                  </div>
+                  
+                  {postGstDiscountEnabled && (
+                    <div className="flex gap-2 items-center">
+                      <Input
+                        value={postGstDiscountName}
+                        onChange={(e) => {
+                          setPostGstDiscountName(e.target.value);
+                          setHasChanges(true);
+                        }}
+                        placeholder="Advance Received"
+                        className="flex-1 text-sm"
+                      />
+                      <Input
+                        type="number"
+                        value={postGstDiscountAmount}
+                        onChange={(e) => {
+                          setPostGstDiscountAmount(parseFloat(e.target.value) || 0);
+                          setHasChanges(true);
+                        }}
+                        placeholder="0"
+                        min="0"
+                        step="0.01"
+                        className="w-32"
+                      />
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex justify-between text-xl font-bold border-t pt-2">
