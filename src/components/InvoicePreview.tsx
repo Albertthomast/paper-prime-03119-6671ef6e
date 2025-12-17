@@ -204,6 +204,12 @@ export const InvoicePreview = ({ invoice, lineItems, companySettings, onBack }: 
                     <span className="font-semibold text-gray-900">{getCurrencySymbol(invoice.currency)}{invoice.gst_amount.toFixed(2)}</span>
                   </div>
                 )}
+                {invoice.post_gst_discount_enabled && invoice.post_gst_discount_amount > 0 && (
+                  <div className="flex justify-between py-3 border-b border-gray-200">
+                    <span className="text-gray-700">{invoice.post_gst_discount_name}:</span>
+                    <span className="font-semibold text-gray-900">-{getCurrencySymbol(invoice.currency)}{invoice.post_gst_discount_amount.toFixed(2)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between py-4 border-t-2 border-gray-900">
                   <span className="text-xl font-bold text-gray-900">Total:</span>
                   <span className="text-2xl font-bold text-blue-600">{getCurrencySymbol(invoice.currency)}{invoice.total.toFixed(2)}</span>
