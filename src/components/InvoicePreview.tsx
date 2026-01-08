@@ -181,8 +181,8 @@ export const InvoicePreview = ({ invoice, lineItems, companySettings, onBack }: 
                   </>
                 )}
                 <div className="flex justify-between py-3 border-b border-gray-200">
-                  <span className="text-gray-700 font-semibold">Subtotal:</span>
-                  <span className="font-semibold text-gray-900">{getCurrencySymbol(invoice.currency)}{invoice.subtotal.toFixed(2)}</span>
+                  <span className="text-blue-600 font-semibold">Subtotal:</span>
+                  <span className="font-semibold text-blue-600">{getCurrencySymbol(invoice.currency)}{invoice.subtotal.toFixed(2)}</span>
                 </div>
                 {invoice.advance_enabled && invoice.advance_value > 0 && (
                   <div className="flex justify-between py-3 border-b border-gray-200">
